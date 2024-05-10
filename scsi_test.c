@@ -62,7 +62,7 @@ static struct supported_sub_cmds sub_cmd_str[] = {
 	/* subcommand options for list */
 	{ "list",	"cd-rom",	"List CD-ROM devices from the host" },
 	{ "list",	"tape",		"List Tape devices from the host" },
-	{ "list",	"medium-changer", "List Medium Changer devices from the host" },
+	{ "list",	"medium-changer",	"List Medium Changer devices from the host" },
 	{ "list",	"enclosure",	"List Enclosure devices from the host" },
 	{ "list",	"fc_hba",	"List Fiber Channel HBA instlled" },
 	{ "list",	"iscsi",	"List iSCSI Sessions" },
@@ -104,7 +104,7 @@ void list_subcommands(const char *cmd)
 		p = sub_cmd_str + i;
 
 		/* Search for the first occurance of the command */
-		if (strcmp(cmd, p->cmd) == 0) {
+		if (strncmp(cmd, p->cmd, strlen(cmd)) == 0) {
 			printf("\n%-.2sFollowing Sub-Commands are supported for '%s'\n",
 			    space, cmd);
 			printf("%-.2s%-.64s\n", space, dash);
@@ -116,7 +116,7 @@ void list_subcommands(const char *cmd)
 		p = sub_cmd_str + i;
 
 		/*  Print sub-command and description as a list */
-		if (strcmp(cmd, p->cmd) == 0)
+		if (strncmp(cmd, p->cmd, strlen(cmd)) == 0)
 			printf("%-.2s%-*s%-.4s%s\n", space, padding, p->sub_cmd,
 			    space, p->sub_cmd_desc);
 	}
@@ -153,7 +153,7 @@ int validate_command(char *cmd)
 
 		print_debug("Searching for command '%s' ", cmd);
 
-		if (strcmp(cmd, p->cmds) == 0) {
+		if (strncmp(cmd, p->cmds, strlen(cmd)) == 0) {
 			print_debug("Found Command match %s (%s)",
 			    cmd, p->cmds);
 			return 0;
@@ -182,7 +182,7 @@ int validate_subcommand(char **argv)
 
 	for (i = 0; i < ARRAY_SIZE(cmd_str); i++) {
 		struct supported_cmds *p = cmd_str + i;
-		if (strcmp(cmd, p->cmds) == 0) {
+		if (strncmp(cmd, p->cmds, strlen(cmd)) == 0) {
 			print_debug("found Command '%s'", cmd);
 			break;
 		}
@@ -192,8 +192,8 @@ int validate_subcommand(char **argv)
 		struct supported_sub_cmds *p = sub_cmd_str + i;
 
 		print_debug("Searching for %s ", sub_cmd);
-		if ((strcmp(cmd, p->cmd) == 0) &&
-		    (strcmp(sub_cmd, p->sub_cmd) == 0)) {
+		if ((strncmp(cmd, p->cmd, strlen(cmd)) == 0) &&
+		    (strncmp(sub_cmd, p->sub_cmd, strlen(sub_cmd)) == 0)) {
 			print_debug("Found sub-command match %s (%s)",
 			    sub_cmd, p->sub_cmd);
 
@@ -275,50 +275,50 @@ int cmd_list(int argc, char **argv, struct scsi_device_list *s_dev)
 		if (err < 0)
 			return err;
 
-		if (!strcmp(argv[2], "fc_hba")) {
+		if (strncmp(argv[2], "fc_hba", 6) == 0) {
 			err = list_fc_adapters(s_dev->fc_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "iscsi")) {
+		if (strncmp(argv[2], "iscsi", 5) == 0) {
 			err = list_iscsi_devs(s_dev->iscsi_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "controller")) {
+		if (strncmp(argv[2], "controller", 10) == 0) {
 			err = list_controllers(s_dev->disk_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "disk")) {
+		if (strncmp(argv[2], "disk", 4) == 0) {
 			err = list_block_devs(s_dev->disk_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "multipath")) {
+		if (strncmp(argv[2], "multipath", 9) == 0) {
 			err = list_multipath_devs(s_dev->disk_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "generic")) {
+		if (strncmp(argv[2], "generic", 7) == 0) {
 			err = list_generic_devs(s_dev->disk_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "enclosure")) {
+		if (strncmp(argv[2], "enclosure", 9) == 0) {
 			err = list_enclosure(s_dev->disk_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "cd-rom")) {
+		if (strncmp(argv[2], "cd-rom", 6) == 0) {
 			err = list_cdrom_devs(s_dev->disk_info);
 			if (err < 0)
 				goto err_out;
 		}
-		if (!strcmp(argv[2], "medium-changer")) {
+		if (strncmp(argv[2], "medium-changer", 14) == 0) {
 			print_command_label("Medium-Changer");
 		}
-		if (!strcmp(argv[2], "tape")) {
+		if (strncmp(argv[2], "tape", 4) == 0) {
 			err = list_tape_devs(s_dev->disk_info);
 			if (err < 0)
 				goto err_out;

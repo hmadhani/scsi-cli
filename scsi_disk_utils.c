@@ -1225,7 +1225,7 @@ int show_enclosure_details(char *argv[], struct scsi_device_list *sdev)
 
 	print_trace_enter();
 
-	if (!strcmp(argv[2], "enclosure"))
+	if (strncmp(argv[2], "enclosure", 9) != 0)
 		return -EINVAL;
 
 	if (disk_info->disk_name)

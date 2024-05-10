@@ -81,8 +81,8 @@ typedef unsigned long long __u64;
  */
 #define for_each_dir(entry, subdir)			\
 	while ((entry = readdir(subdir)) != NULL)	\
-		if (strcmp(entry->d_name, ".") &&	\
-		    strcmp(entry->d_name, ".."))
+		if (strncmp(entry->d_name, ".", 1) &&	\
+		    strncmp(entry->d_name, "..", 2))
 
 /* simple linked list functions */
 
